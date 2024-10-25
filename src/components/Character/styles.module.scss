@@ -1,0 +1,17 @@
+.wrapper {
+  padding: 0 30px;
+  height: 100%;
+  max-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  cursor: pointer;
+
+  &:nth-child(even) {
+    background-color: #f3f3f6;
+  }
+  &:hover {
+    opacity: 0.4;
+  }
+}

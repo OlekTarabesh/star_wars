@@ -1,0 +1,19 @@
+.wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+
+  .charList {
+    padding: 50px;
+    width: 40%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .reactFlow {
+    width: 100%;
+  }
+}
