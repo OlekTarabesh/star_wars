@@ -1,19 +1,37 @@
 .wrapper {
+  position: relative;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   display: flex;
+  @media (max-width: 1023px) {
+    flex-direction: column;
+  }
 
   .charList {
-    padding: 50px;
-    width: 60%;
+    margin: 30px 0 0 30px;
+    position: absolute;
+    padding: 10px;
+    height: 60vh;
+    max-height: 420px;
     display: flex;
-    justify-content: space-between;
+    // justify-content: space-between;
     align-items: center;
     flex-direction: column;
-    gap: 30px;
+    z-index: 2;
+    backdrop-filter: blur(3px);
+    border: 1px solid #d3d3d4;
+    border-radius: 8px;
+    transition: 1s ease-in;
+    overflow: hidden;
+    @media (max-width: 1023px) {
+      height: 50px;
+    }
   }
 
   .reactFlow {
     width: 100%;
+    height: 100%;
+    @media (max-width: 1023px) {
+    }
   }
 }

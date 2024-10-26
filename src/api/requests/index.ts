@@ -37,7 +37,7 @@ export const getFilms = async (): Promise<FilmsResponse | void> => {
 export const getStarships = async (): Promise<
   StarshipsResponse | StashipTypes[] | void
 > => {
-  let allStarships: StashipTypes[] = []; // Store all starships here
+  let allStarships: StashipTypes[] = [];
   let page = 1;
   let hasMoreData = true;
 

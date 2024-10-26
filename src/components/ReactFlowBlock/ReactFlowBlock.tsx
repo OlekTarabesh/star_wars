@@ -8,29 +8,15 @@ import {
 
 import "@xyflow/react/dist/style.css";
 
-function ReactFlowBlock({
-  nodes,
-  edges,
-}: {
-  nodes: Node[] | undefined;
-  edges: Edge[];
-}) {
+function ReactFlowBlock({ nodes, edges }: { nodes: Node[]; edges: Edge[] }) {
   const rfStyle = {
     backgroundColor: "#b8cfff1b",
   };
 
   return (
-    <>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        fitView
-        className={"node"}
-        style={rfStyle}
-      >
-        <Background color="#00000014" variant={BackgroundVariant.Cross} />
-      </ReactFlow>
-    </>
+    <ReactFlow nodes={nodes} edges={edges} fitView style={rfStyle}>
+      <Background color="#00000014" variant={BackgroundVariant.Cross} />
+    </ReactFlow>
   );
 }
 

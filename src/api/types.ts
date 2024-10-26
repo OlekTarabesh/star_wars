@@ -1,11 +1,11 @@
 export interface Character {
-  id: number | string;
+  id: string;
   name: string;
-  films?: number[];
-  starships?: number[];
+  films: number[];
+  starships: number[];
   filmNode: boolean;
   starshipNode: boolean;
-  position?: {
+  position: {
     x: number;
     y: number;
   };
@@ -21,8 +21,8 @@ export interface Character {
 
 export interface CharactersResponse {
   count: number;
-  next: string | null;
-  previous: string | null;
+  next: string;
+  previous: string;
   results: Character[];
 }
 
@@ -50,7 +50,7 @@ export interface StashipTypes {
 }
 export interface StarshipsResponse {
   count: number;
-  next: string | null;
-  previous: string | null;
+  next: string;
+  previous: string;
   results: StashipTypes[];
 }

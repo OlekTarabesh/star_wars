@@ -3,7 +3,6 @@ import { Edge, Node } from "@xyflow/react";
 
 import CharactersList from "./components/CharactersList/CharactersList";
 import Buttons from "./components/Buttons/Buttons";
-import Loading from "./components/Loading/Loading";
 import Title from "./components/Title/Title";
 import ReactFlowBlock from "./components/ReactFlowBlock/ReactFlowBlock";
 
@@ -35,7 +34,12 @@ export default function App() {
   const getCharactersHandler = useCallback(async () => {
     setIsLoading(true);
     const data = (await getCharacters(page)) as CharactersResponse;
-    setCharactersData(data);
+    // Some of the ids overlapping with films and starships, so I changed them
+    const newCharactersIds = data.results.map((res) => ({
+      ...res,
+      id: `${res.id}` + 1,
+    }));
+    setCharactersData(() => ({ ...data, results: newCharactersIds }));
     setLimit(data?.count);
     setIsLoading(false);
   }, [page]);
@@ -109,13 +113,10 @@ export default function App() {
           });
         }
       });
-
       return result;
     },
     [charactersData?.results, filmsData?.results, starships]
   );
-  console.log(nodes, "nodes");
-  console.log(nodes, "nodes");
 
   const chooseACharacter = useCallback(
     (id: string | number) => {
@@ -130,7 +131,7 @@ export default function App() {
         };
       });
 
-      setNodes(arrangeNodesInGraph(selectedCharacter, 300, 360, 300, 50));
+      setNodes(arrangeNodesInGraph(selectedCharacter, 300, 200, 300, 60));
       setEdges(myEdges);
     },
     [generateCharactersConnections]
@@ -140,14 +141,11 @@ export default function App() {
     <main className={styles.wrapper}>
       <section className={styles.charList}>
         <Title title="Characters" />
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <CharactersList
-            characters={charactersData?.results}
-            chooseACharacter={chooseACharacter}
-          />
-        )}
+        <CharactersList
+          characters={charactersData?.results}
+          chooseACharacter={chooseACharacter}
+          isLoading={isLoading}
+        />
         <Buttons setPage={setPage} page={page} limit={limit} />
       </section>
 

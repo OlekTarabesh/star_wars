@@ -5,18 +5,25 @@ import Character from "../Character/Character";
 import { CharactersListTypes } from "./types";
 
 import styles from "./styles.module.scss";
+import Loading from "../Loading/Loading";
 
 const CharactersList = memo(
-  ({ characters, chooseACharacter }: CharactersListTypes) => {
+  ({ characters, chooseACharacter, isLoading }: CharactersListTypes) => {
     return (
       <ul className={styles.wrapper}>
-        {characters?.map((char) => (
-          <Character
-            key={char.id}
-            character={char}
-            chooseACharacter={chooseACharacter}
-          />
-        ))}
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <>
+            {characters?.map((char) => (
+              <Character
+                key={char.id}
+                character={char}
+                chooseACharacter={chooseACharacter}
+              />
+            ))}
+          </>
+        )}
       </ul>
     );
   }
