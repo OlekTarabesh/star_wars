@@ -1,27 +1,35 @@
-import { Node, ReactFlow } from "@xyflow/react";
+import {
+  Background,
+  BackgroundVariant,
+  Edge,
+  Node,
+  ReactFlow,
+} from "@xyflow/react";
 
 import "@xyflow/react/dist/style.css";
 
-// import { initialEdges, initialNodes } from "./nodes";
-
-function ReactFlowBlock({ nodes }: { nodes: Node[] | undefined }) {
-  //   const arrangeInGrid = () => {
-  //     setNodes((nodes) => arrangeNodesInGrid(nodes));
-  //   };
-
-  //   const onNodesChange: OnNodesChange = useCallback(
-  //     (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-  //     [setNodes]
-  //   );
-  //   const onEdgesChange: OnEdgesChange = useCallback(
-  //     (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-  //     [setEdges]
-  //   );
+function ReactFlowBlock({
+  nodes,
+  edges,
+}: {
+  nodes: Node[] | undefined;
+  edges: Edge[];
+}) {
+  const rfStyle = {
+    backgroundColor: "#b8cfff1b",
+  };
 
   return (
     <>
-      <ReactFlow nodes={nodes} fitView />
-      {/* <button onClick={arrangeInGrid}>click</button> */}
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        fitView
+        className={"node"}
+        style={rfStyle}
+      >
+        <Background color="#00000014" variant={BackgroundVariant.Cross} />
+      </ReactFlow>
     </>
   );
 }

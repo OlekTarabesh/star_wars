@@ -3,11 +3,19 @@ export interface Character {
   name: string;
   films?: number[];
   starships?: number[];
+  filmNode: boolean;
   position?: {
     x: number;
     y: number;
   };
   type?: string;
+  title?: string;
+  edge: {
+    animated: boolean;
+    id: string;
+    source: string;
+    target: string;
+  };
 }
 
 export interface CharactersResponse {
@@ -18,11 +26,28 @@ export interface CharactersResponse {
 }
 
 export interface Film {
-  id: string | number;
+  id: number;
   title: string;
+  edge?: {
+    id: string;
+    source: string;
+    target: string;
+  };
 }
 
 export interface FilmsResponse {
   count: number;
   results: Film[];
+}
+
+export interface StashipTypes {
+  films: number[];
+  id: number;
+  name: string;
+}
+export interface StarshipsResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: StashipTypes[];
 }

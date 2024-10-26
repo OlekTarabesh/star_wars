@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Node } from "@xyflow/react";
+import { Edge, Node } from "@xyflow/react";
 
 import CharactersList from "./components/CharactersList/CharactersList";
 import Buttons from "./components/Buttons/Buttons";
@@ -12,26 +12,33 @@ import {
   FilmsResponse,
   getCharacters,
   getFilms,
+  getStarships,
+  StashipTypes,
 } from "./api";
-import { arrangeNodesInGrid } from "./utils/helpers";
+import { arrangeNodesInGraph } from "./utils/helpers";
 
 import styles from "./app.styles.module.scss";
 
 export default function App() {
-  const [data, setData] = useState<CharactersResponse | null>(null);
-  const [films, setFilms] = useState<FilmsResponse | null>(null);
+  const [charactersData, setCharactersData] =
+    useState<CharactersResponse | null>(null);
+  const [filmsData, setFilmsData] = useState<FilmsResponse | null>(null);
+  const [starships, setStarships] = useState<StashipTypes[]>([]);
+  console.log(charactersData, "charactersData");
+  console.log(filmsData, "filmsData");
+  console.log(starships, "starships");
 
   const [limit, setLimit] = useState<number>(0);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [nodes, setNodes] = useState<Node[]>();
-  // const [edges, setEdges] = useState<Edge[]>();
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [edges, setEdges] = useState<Edge[]>([]);
 
   const getCharactersHandler = useCallback(async () => {
     setIsLoading(true);
     const data = (await getCharacters(page)) as CharactersResponse;
-    setData(data);
+    setCharactersData(data);
     setLimit(data?.count);
     setIsLoading(false);
   }, [page]);
@@ -41,24 +48,94 @@ export default function App() {
   }, [getCharactersHandler]);
 
   const getFilmsHandler = async () => {
-    const filmsData = (await getFilms()) as FilmsResponse;
+    const films = (await getFilms()) as FilmsResponse;
 
-    setFilms(filmsData);
+    setFilmsData(films);
   };
-  console.log(films, "films");
 
   useEffect(() => {
     getFilmsHandler();
   }, []);
 
+  const getStarshipsHandler = async () => {
+    const starshipsData = (await getStarships()) as StashipTypes[];
+
+    setStarships(starshipsData);
+  };
+
+  useEffect(() => {
+    getStarshipsHandler();
+  }, []);
+
+  // console.log(nodes, "nodes");
+
+  const generateCharactersConnections = useCallback(
+    (id: string | number) => {
+      const result = [];
+      // looking for the clicked character
+      const character = charactersData?.results.find((item) => item.id === id);
+      if (character) result.push(character);
+
+      // looking for the films where character was in
+      filmsData?.results?.forEach((f) => {
+        // character?.starships?.forEach((ship) => {})
+        const hasFilm = character?.films?.includes(f.id);
+        if (hasFilm) {
+          // set edges and source for films
+          const filmWithEdges = {
+            ...f,
+            filmNode: true,
+            edge: {
+              id: `${f.id}`,
+              source: `${character?.id}`,
+            },
+          };
+          result.push(filmWithEdges);
+        }
+      });
+
+      // STARSHIP CONNECTIONS
+      starships?.forEach((starship) => {
+        const foundShip = character?.starships?.find(
+          (ship) => starship.id === ship
+        );
+
+        if (foundShip) {
+          const sourceFilm = starship?.films.reduce((_, curr) => curr, 0);
+          const shipWithEdges = {
+            ...starship,
+            edge: {
+              id: `${foundShip}`,
+              source: `${sourceFilm}`,
+            },
+          };
+
+          result.push(shipWithEdges);
+        }
+      });
+
+      return result;
+    },
+    [charactersData?.results, filmsData?.results, starships]
+  );
+
   const chooseACharacter = useCallback(
     (id: string | number) => {
-      const selectedCharacter = data?.results.filter((char) => char.id === id);
-      if (!selectedCharacter) return;
+      const selectedCharacter = generateCharactersConnections(id);
+      const edgesOnly = selectedCharacter.filter((item) => item.edge);
+      const myEdges = edgesOnly.map((item) => {
+        return {
+          id: `${item.edge.id}`,
+          source: item?.edge?.source,
+          target: item?.edge?.id,
+          animated: true,
+        };
+      });
 
-      setNodes(arrangeNodesInGrid(selectedCharacter, 45, -200, false));
+      setNodes(arrangeNodesInGraph(selectedCharacter, 300, 360, 200, true));
+      setEdges(myEdges);
     },
-    [data?.results]
+    [generateCharactersConnections]
   );
 
   return (
@@ -69,7 +146,7 @@ export default function App() {
           <Loading />
         ) : (
           <CharactersList
-            characters={data?.results}
+            characters={charactersData?.results}
             chooseACharacter={chooseACharacter}
           />
         )}
@@ -77,7 +154,7 @@ export default function App() {
       </section>
 
       <section className={styles.reactFlow}>
-        <ReactFlowBlock nodes={nodes} />
+        <ReactFlowBlock nodes={nodes} edges={edges} />
       </section>
     </main>
   );

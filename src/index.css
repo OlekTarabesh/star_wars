@@ -15,3 +15,10 @@ html {
   height: 100%;
   font-family: "Roboto";
 }
+
+.nodes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+}
