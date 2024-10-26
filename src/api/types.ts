@@ -28,6 +28,8 @@ export interface CharactersResponse {
 export interface Film {
   id: number;
   title: string;
+  characters: number[];
+  starships: number[];
   edge?: {
     id: string;
     source: string;

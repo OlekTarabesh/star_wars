@@ -24,9 +24,6 @@ export default function App() {
     useState<CharactersResponse | null>(null);
   const [filmsData, setFilmsData] = useState<FilmsResponse | null>(null);
   const [starships, setStarships] = useState<StashipTypes[]>([]);
-  console.log(charactersData, "charactersData");
-  console.log(filmsData, "filmsData");
-  console.log(starships, "starships");
 
   const [limit, setLimit] = useState<number>(0);
   const [page, setPage] = useState(1);
@@ -67,50 +64,49 @@ export default function App() {
     getStarshipsHandler();
   }, []);
 
-  // console.log(nodes, "nodes");
-
   const generateCharactersConnections = useCallback(
     (id: string | number) => {
       const result = [];
-      // looking for the clicked character
+
+      // Find the selected character
       const character = charactersData?.results.find((item) => item.id === id);
       if (character) result.push(character);
 
-      // looking for the films where character was in
-      filmsData?.results?.forEach((f) => {
-        // character?.starships?.forEach((ship) => {})
-        const hasFilm = character?.films?.includes(f.id);
-        if (hasFilm) {
-          // set edges and source for films
+      // Loop through each film in which the character appears
+      filmsData?.results?.forEach((film) => {
+        if (character?.films?.includes(film.id)) {
+          // Add film node and create edge from character to film
           const filmWithEdges = {
-            ...f,
+            ...film,
             filmNode: true,
             edge: {
-              id: `${f.id}`,
-              source: `${character?.id}`,
+              id: `edge-${character.id}-to-film-${film.id}`,
+              source: `${character.id}`,
+              target: `${film.id}`,
             },
           };
           result.push(filmWithEdges);
-        }
-      });
 
-      // STARSHIP CONNECTIONS
-      starships?.forEach((starship) => {
-        const foundShip = character?.starships?.find(
-          (ship) => starship.id === ship
-        );
-
-        if (foundShip) {
-          const sourceFilm = starship?.films.reduce((_, curr) => curr, 0);
-          const shipWithEdges = {
-            ...starship,
-            edge: {
-              id: `${foundShip}`,
-              source: `${sourceFilm}`,
-            },
-          };
-
-          result.push(shipWithEdges);
+          // Loop through each starship in the film
+          film.starships.forEach((starshipId) => {
+            if (character.starships?.includes(starshipId)) {
+              // Find the starship object
+              const starship = starships.find((ship) => ship.id === starshipId);
+              if (starship) {
+                // Add starship node and create edge from film to starship
+                const starshipWithEdges = {
+                  ...starship,
+                  starshipNode: true,
+                  edge: {
+                    id: `edge-film-${film.id}-to-starship-${starship.id}`,
+                    source: `${film.id}`,
+                    target: `${starship.id}`,
+                  },
+                };
+                result.push(starshipWithEdges);
+              }
+            }
+          });
         }
       });
 
@@ -118,6 +114,8 @@ export default function App() {
     },
     [charactersData?.results, filmsData?.results, starships]
   );
+  console.log(nodes, "nodes");
+  console.log(nodes, "nodes");
 
   const chooseACharacter = useCallback(
     (id: string | number) => {
@@ -125,9 +123,9 @@ export default function App() {
       const edgesOnly = selectedCharacter.filter((item) => item.edge);
       const myEdges = edgesOnly.map((item) => {
         return {
-          id: `${item.edge.id}`,
-          source: item?.edge?.source,
-          target: item?.edge?.id,
+          id: `edge-${item.edge.source}-${item.edge.target}`, // Unique edge ID
+          source: `${item.edge.source}`, // Ensure it matches a node ID exactly
+          target: `${item.edge.target}`, // Ensure it matches a node ID exactly
           animated: true,
         };
       });

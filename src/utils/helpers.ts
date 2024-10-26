@@ -21,9 +21,10 @@ export const arrangeNodesInGraph = (
           y: centerY,
         },
         style: {
-          backgroundColor: "#516FC080",
+          backgroundColor: "#5f6Ff0",
           border: "none",
           fontWeight: 600,
+          color: "#fff",
         },
       };
     } else {
@@ -39,7 +40,7 @@ export const arrangeNodesInGraph = (
         className: "nodes",
         style: {
           width: 80,
-          backgroundColor: node.filmNode ? "#FF9A5160" : "#5DE7DD",
+          backgroundColor: node.filmNode ? "#FF9fff" : "#5DE7DD",
           border: "none",
           padding: 10,
           fontSize: 8,
