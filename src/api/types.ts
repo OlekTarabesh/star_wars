@@ -4,6 +4,7 @@ export interface Character {
   films?: number[];
   starships?: number[];
   filmNode: boolean;
+  starshipNode: boolean;
   position?: {
     x: number;
     y: number;

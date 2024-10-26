@@ -130,7 +130,7 @@ export default function App() {
         };
       });
 
-      setNodes(arrangeNodesInGraph(selectedCharacter, 300, 360, 200, true));
+      setNodes(arrangeNodesInGraph(selectedCharacter, 300, 360, 300, 50));
       setEdges(myEdges);
     },
     [generateCharactersConnections]
