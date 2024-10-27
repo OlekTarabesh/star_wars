@@ -2,9 +2,8 @@ import { useCallback, useEffect, useState } from "react";
 import { Edge, Node } from "@xyflow/react";
 
 import CharactersList from "./components/CharactersList/CharactersList";
-import Buttons from "./components/Buttons/Buttons";
-import Title from "./components/Title/Title";
 import ReactFlowBlock from "./components/ReactFlowBlock/ReactFlowBlock";
+import CharactersBoard from "./components/CharactersBoard/CharactersBoard";
 
 import {
   CharactersResponse,
@@ -19,15 +18,17 @@ import { arrangeNodesInGraph } from "./utils/helpers";
 import styles from "./app.styles.module.scss";
 
 export default function App() {
+  // Data states
   const [charactersData, setCharactersData] =
     useState<CharactersResponse | null>(null);
   const [filmsData, setFilmsData] = useState<FilmsResponse | null>(null);
   const [starships, setStarships] = useState<StashipTypes[]>([]);
-
+  // UI states
   const [limit, setLimit] = useState<number>(0);
   const [page, setPage] = useState(1);
+  const [openList, setOpenList] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  // ReactFlow states
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
 
@@ -117,12 +118,12 @@ export default function App() {
     },
     [charactersData?.results, filmsData?.results, starships]
   );
-
+  // Selecting character on click
   const chooseACharacter = useCallback(
     (id: string | number) => {
       const selectedCharacter = generateCharactersConnections(id);
-      const edgesOnly = selectedCharacter.filter((item) => item.edge);
-      const myEdges = edgesOnly.map((item) => {
+      const dataWithEdgesOnly = selectedCharacter.filter((item) => item.edge);
+      const edgesFlow = dataWithEdgesOnly.map((item) => {
         return {
           id: `edge-${item.edge.source}-${item.edge.target}`, // Unique edge ID
           source: `${item.edge.source}`, // Ensure it matches a node ID exactly
@@ -132,26 +133,27 @@ export default function App() {
       });
 
       setNodes(arrangeNodesInGraph(selectedCharacter, 300, 200, 300, 60));
-      setEdges(myEdges);
+      setEdges(edgesFlow);
     },
     [generateCharactersConnections]
   );
 
   return (
     <main className={styles.wrapper}>
-      <section className={styles.charList}>
-        <Title title="Characters" />
+      <CharactersBoard
+        openList={openList}
+        setPage={setPage}
+        page={page}
+        limit={limit}
+        setOpenList={setOpenList}
+      >
         <CharactersList
           characters={charactersData?.results}
           chooseACharacter={chooseACharacter}
           isLoading={isLoading}
         />
-        <Buttons setPage={setPage} page={page} limit={limit} />
-      </section>
-
-      <section className={styles.reactFlow}>
-        <ReactFlowBlock nodes={nodes} edges={edges} />
-      </section>
+      </CharactersBoard>
+      <ReactFlowBlock nodes={nodes} edges={edges} />
     </main>
   );
 }
