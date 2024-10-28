@@ -1,9 +1,9 @@
 How to start the project:
 
-1. In your terminal select a path where you want to store this project "cd <directory>"
+1. In your terminal select a path where you want to store this project "cd (directory)"
 2. On Github project click Code button and copy link with HTTPS
-3. It terminal write: git clone <link to the project>
-4. cd <project folder name>
+3. It terminal write: git clone 'link to the project'
+4. cd "project folder name"
 5. npm i
 6. yarn run dev
 7. Done
