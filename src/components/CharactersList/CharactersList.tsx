@@ -12,7 +12,7 @@ const CharactersList = memo(
     return (
       <ul className={styles.wrapper}>
         {isLoading ? (
-          <Loading />
+          <Loading isLoading={isLoading} />
         ) : (
           <>
             {characters?.map((char) => (

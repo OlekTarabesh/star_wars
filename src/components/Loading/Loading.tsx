@@ -1,10 +1,15 @@
+import loading from "../../assets/loading.svg";
 import styles from "./styles.module.scss";
 
-const Loading = () => {
+const Loading = ({ isLoading }: { isLoading: boolean }) => {
   return (
-    <div className={styles.wrapper}>
-      <h4>LOADING...</h4>
-    </div>
+    <>
+      {isLoading ? (
+        <div className={styles.wrapper}>
+          <img src={loading} alt="" className={styles.icon} />
+        </div>
+      ) : null}
+    </>
   );
 };
 

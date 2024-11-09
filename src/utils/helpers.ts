@@ -1,5 +1,12 @@
 import { Position } from "@xyflow/react";
-import { Character } from "../api";
+import {
+  Character,
+  CharactersResponse,
+  FilmsResponse,
+  getFilms,
+  getStarships,
+  StashipTypes,
+} from "../api";
 
 export const arrangeNodesInGraph = (
   nodes: Character[],
@@ -91,4 +98,75 @@ export const arrangeNodesInGraph = (
       };
     }
   });
+};
+
+export const generateEdges = (selectedCharacter: Character[]) =>
+  selectedCharacter
+    .filter((item) => item.edge)
+    .map((item) => {
+      return {
+        id: `edge-${item.edge.source}-${item.edge.target}`, // Unique edge ID
+        source: `${item.edge.source}`, // Ensure it matches a node ID exactly
+        target: `${item.edge.target}`, // Ensure it matches a node ID exactly
+        animated: true,
+      };
+    });
+
+export const generateCharactersConnections = async (
+  id: string | number,
+  charactersData: CharactersResponse | null
+) => {
+  const result = [];
+  // Find the selected character
+  const character = charactersData?.results.find((item) => item.id === id);
+
+  if (character) {
+    // get hero's films where he appears
+    const charFilms = (await getFilms(character?.films)) as FilmsResponse;
+    // get hero's starships which he drove
+    const charShips = (await getStarships(
+      character?.starships
+    )) as StashipTypes[];
+
+    result.push(character);
+    // Loop through each film in which the character appears
+    charFilms?.results?.forEach((film) => {
+      if (character?.films?.includes(film.id)) {
+        // Add film node and create edge from character to film
+        const filmWithEdges = {
+          ...film,
+          filmNode: true,
+          edge: {
+            id: `edge-${character.id}-to-film-${film.id}`,
+            source: `${character.id}`,
+            target: `${film.id}`,
+          },
+        };
+        result.push(filmWithEdges);
+      }
+
+      // Loop through each starship in the film
+      film.starships.forEach((starshipId) => {
+        if (character.starships?.includes(starshipId)) {
+          // Find the starship object
+          const starship = charShips?.find((item) => item?.id === starshipId);
+
+          if (starship) {
+            // Add starship node and create edge from film to starship
+            const starshipWithEdges = {
+              ...starship,
+              starshipNode: true,
+              edge: {
+                id: `edge-film-${film.id}-to-starship-${starship?.id}`,
+                source: `${film.id}`,
+                target: `${starship?.id}`,
+              },
+            };
+            result.push(starshipWithEdges);
+          }
+        }
+      });
+    });
+  }
+  return result;
 };
