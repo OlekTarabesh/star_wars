@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import MobileButtons from "../MobileButtons/MobileButtons";
 import Title from "../Title/Title";
 import Buttons from "../Buttons/Buttons";
@@ -8,12 +10,11 @@ import styles from "./styles.module.scss";
 
 const CharactersBoard = ({
   children,
-  openList,
   setPage,
   page,
   limit,
-  setOpenList,
 }: CharactersBoardTypes) => {
+  const [openList, setOpenList] = useState(false);
   return (
     <section
       className={
